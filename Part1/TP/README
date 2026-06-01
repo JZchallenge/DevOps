@@ -1,0 +1,29 @@
+# 1-1 -e permet de sécuriser les clés API, mot de passe et utilisateur
+
+# 1-2 Sans volume, les données sont stockées dans le conteneur, si on le supprime (docker rm), tout est perdu.
+
+# 1-3 Document your database container essentials: commands and Dockerfile. 
+Dockerfile : 
+FROM postgres:17.2-alpine
+
+ENV POSTGRES_DB=db \
+    POSTGRES_USER=usr \
+    POSTGRES_PASSWORD=pwd
+
+Commands : 
+docker build -t jzhang_database ./database
+
+docker network create app-network
+
+docker run -d \
+  --name my-postgres \
+  --network app-network \
+  -e POSTGRES_DB=db \
+  -e POSTGRES_USER=usr \
+  -e POSTGRES_PASSWORD=pwd \
+  -v /my/own/datadir:/var/lib/postgresql/data \
+  my-database
+
+  # 1-4 
+  Un multistage build permet de séparer l’environnement de construction (build) et l’environnement d’exécution (runtime).
+  Dans une première étape, on utilise une image contenant un JDK et des outils comme Maven afin de compiler l’application Spring Boot et générer un fichier .jar. Dans une deuxième étape, on utilise une image le JRE, suffisant pour exécuter l’application.
