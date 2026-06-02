@@ -39,6 +39,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Part1/TP/backend
-          file: ./Part1/TP/backend/Dockerfile   
+          file: ./Part1/TP/backend/Dockerfile
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
           push: ${{ github.ref_name == 'main' }}
