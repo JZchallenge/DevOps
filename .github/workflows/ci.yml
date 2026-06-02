@@ -18,6 +18,10 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+      - name: Clean and version
+        run: |
+          mvn -B clean \
+            --file ./Part1/TP/backend/pom.xml
       - name: Build, test and SonarCloud analysis
         run: |
           mvn -B verify sonar:sonar \
