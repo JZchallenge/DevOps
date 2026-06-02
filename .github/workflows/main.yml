@@ -9,6 +9,9 @@ on:
 
 jobs:
 
+  # =========================
+  # 1. TEST BACKEND
+  # =========================
   test-backend:
     runs-on: ubuntu-24.04
 
@@ -22,9 +25,12 @@ jobs:
           java-version: 21
 
       - name: Build and test with Maven
-        run: mvn clean verify --file ./Part1/TP/backend/pom.xml
+        run: mvn clean verify --file ./backend/pom.xml
 
 
+  # =========================
+  # 2. SONARCLOUD QUALITY GATE
+  # =========================
   sonar:
     needs: test-backend
     runs-on: ubuntu-24.04
@@ -45,37 +51,35 @@ jobs:
             -Dsonar.organization=jzchallenge \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            --file ./Part1/TP/backend/pom.xml
+            --file ./backend/pom.xml
 
   build-and-push-docker-image:
     needs: sonar
     runs-on: ubuntu-24.04
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login DockerHub
+      - name: Login to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Backend
+      - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
-          context: ./Part1/TP/backend
-          file: ./Part1/TP/backend/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-backend:latest
+          context: ./backend
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
           push: ${{ github.ref_name == 'main' }}
 
-      - name: Database
+      - name: Build and push database
         uses: docker/build-push-action@v6
         with:
-          context: ./Part1/TP/database
-          file: ./Part1/TP/database/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-database:latest
+          context: ./database
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
           push: ${{ github.ref_name == 'main' }}
 
-      - name: Frontend
+      - name: Build and push frontend
         uses: docker/build-push-action@v6
         with:
-          context: ./Part1/TP/httpd
-          file: ./Part1/TP/httpd/Dockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-frontend:latest
+          context: ./httpd
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: ${{ github.ref_name == 'main' }}
