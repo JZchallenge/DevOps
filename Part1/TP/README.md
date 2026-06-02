@@ -70,5 +70,5 @@ docker run -d \
   # 2-1
   Testcontainers est une bibliothèque Java permettant de lancer automatiquement des conteneurs Docker pendant les tests. Cela permet de tester l'application avec de vrais services (PostgreSQL, Redis, etc.) sans avoir à les installer localement.
 
-  # 2-2
+  # 2-2gi t
   Les variables sécurisées permettent de stocker des informations sensibles (mots de passe, tokens, clés API) sans les exposer dans le code source ou dans le dépôt GitHub.
