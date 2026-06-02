@@ -8,10 +8,6 @@ on:
   pull_request:
 
 jobs:
-
-  # =========================
-  # 1. TEST BACKEND
-  # =========================
   test-backend:
     runs-on: ubuntu-24.04
 
@@ -25,12 +21,8 @@ jobs:
           java-version: 21
 
       - name: Build and test with Maven
-        run: mvn clean verify --file ./backend/pom.xml
+        run: mvn clean verify --file ./Part1/TP/backend/pom.xml
 
-
-  # =========================
-  # 2. SONARCLOUD QUALITY GATE
-  # =========================
   sonar:
     needs: test-backend
     runs-on: ubuntu-24.04
@@ -51,7 +43,7 @@ jobs:
             -Dsonar.organization=jzchallenge \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            --file ./backend/pom.xml
+            --file ./Part1/TP/backend/pom.xml
 
   build-and-push-docker-image:
     needs: sonar
@@ -66,20 +58,20 @@ jobs:
       - name: Build and push backend
         uses: docker/build-push-action@v6
         with:
-          context: ./backend
+          context: ./Part1/TP/backend
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
           push: ${{ github.ref_name == 'main' }}
 
       - name: Build and push database
         uses: docker/build-push-action@v6
         with:
-          context: ./database
+          context: ./Part1/TP/database
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
           push: ${{ github.ref_name == 'main' }}
 
-      - name: Build and push frontend
+      - name: Build and push httpd
         uses: docker/build-push-action@v6
         with:
-          context: ./httpd
+          context: ./Part1/TP/httpd
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: ${{ github.ref_name == 'main' }}
