@@ -66,3 +66,9 @@ docker run -d \
 
   # 1-10 Why do we put our images into an online repo?
   Publier ses images sur Docker Hub permet de les partager avec d'autres membres de l'équipe sans avoir à rebuilder sur chaque machine. N'importe qui peut récupérer l'image avec un docker pull et la lancer immédiatement. C'est aussi essentiel pour les pipelines CI/CD qui déploient automatiquement les nouvelles versions sur des serveurs distants. Cela permet de versionner les images avec des tags et de revenir facilement à une version antérieure en cas de problème.
+
+  # 2-1
+  Testcontainers est une bibliothèque Java permettant de lancer automatiquement des conteneurs Docker pendant les tests. Cela permet de tester l'application avec de vrais services (PostgreSQL, Redis, etc.) sans avoir à les installer localement.
+
+  # 2-2
+  Les variables sécurisées permettent de stocker des informations sensibles (mots de passe, tokens, clés API) sans les exposer dans le code source ou dans le dépôt GitHub.
