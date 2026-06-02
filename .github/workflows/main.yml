@@ -47,35 +47,35 @@ jobs:
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
             --file ./Part1/TP/backend/pom.xml
 
-build-and-push-docker-image:
-  needs: sonar
-  runs-on: ubuntu-24.04
-  steps:
-    - uses: actions/checkout@v4
+  build-and-push-docker-image:
+    needs: sonar
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Login DockerHub
-      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Login DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-    - name: Backend
-      uses: docker/build-push-action@v6
-      with:
-        context: ./Part1/TP/backend
-        file: ./Part1/TP/backend/Dockerfile
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-backend:latest
-        push: ${{ github.ref_name == 'main' }}
+      - name: Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Part1/TP/backend
+          file: ./Part1/TP/backend/Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-backend:latest
+          push: ${{ github.ref_name == 'main' }}
 
-    - name: Database
-      uses: docker/build-push-action@v6
-      with:
-        context: ./Part1/TP/database
-        file: ./Part1/TP/database/Dockerfile
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-database:latest
-        push: ${{ github.ref_name == 'main' }}
+      - name: Database
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Part1/TP/database
+          file: ./Part1/TP/database/Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-database:latest
+          push: ${{ github.ref_name == 'main' }}
 
-    - name: Frontend
-      uses: docker/build-push-action@v6
-      with:
-        context: ./Part1/TP/httpd
-        file: ./Part1/TP/httpd/Dockerfile
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-frontend:latest
-        push: ${{ github.ref_name == 'main' }}
+      - name: Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Part1/TP/httpd
+          file: ./Part1/TP/httpd/Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-frontend:latest
+          push: ${{ github.ref_name == 'main' }}
