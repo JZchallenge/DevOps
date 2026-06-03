@@ -22,9 +22,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Part1/TP/backend
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
           push: true
 
   push-database:
@@ -39,9 +37,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Part1/TP/database
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
           push: true
 
   push-httpd:
@@ -56,7 +52,26 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./Part1/TP/httpd
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
           push: true
+
+  deploy:
+    needs: [push-backend, push-database, push-httpd]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Ansible
+        run: pip install ansible
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H jade.zhang.takima.school >> ~/.ssh/known_hosts
+      - name: Create vault password file
+        run: echo "${{ secrets.VAULT_PASSWORD }}" > vault_password.txt
+      - name: Deploy with Ansible
+        run: ansible-playbook -i ansible/inventories/setup.yml ansible/playbook.yml --vault-password-file vault_password.txt
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"
