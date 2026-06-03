@@ -78,3 +78,20 @@ docker run -d \
 
   # 2-4 
   On pousse les images Docker pour stocker et partager une version packagée de l’application, afin de pouvoir la déployer de manière fiable et identique dans tous les environnements (dev, test, production) au sein d’un pipeline CI/CD.
+
+  # 3-1
+  3-1 Document your inventory and base commandsL'inventaire définit les serveurs cibles et les paramètres de connexion SSH. Les commandes de base sont :
+    ansible all -i inventories/setup.yml -m ping : vérifie la connexion
+    ansible all -i inventories/setup.yml -m setup -a "filter=ansible_distribution*" : récupère les facts (infos sur l'OS)
+    ansible all -i inventories/setup.yml -m apt -a "name=apache2 state=absent" --become : supprime un paquet
+
+  # 3-2
+  Le playbook appelle des roles dans l'ordre. Chaque role est responsable d'une partie de l'installation. gather_facts: true permet d'utiliser les variables système comme ansible_facts['distribution_release'] pour installer Docker sur le bon OS.
+
+  # 3-3
+  Chaque role lance un conteneur Docker avec le module docker_container :
+  network → crée le réseau app-network pour que les conteneurs communiquent entre eux
+  database → lance PostgreSQL avec les variables d'environnement POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD
+  app → lance le backend Spring Boot connecté à la base via SPRING_DATASOURCE_URL qui pointe vers le conteneur database
+  proxy → lance Apache httpd exposé sur le port 80 avec BACKEND_HOST=app et BACKEND_PORT=8080 pour rediriger les requêtes vers le backend
+  Le ansible_python_interpreter: /opt/docker_venv/bin/python est nécessaire dans chaque tâche car le SDK Docker est installé dans un virtualenv et non dans le Python système.

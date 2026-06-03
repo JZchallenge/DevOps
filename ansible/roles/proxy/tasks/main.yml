@@ -1,0 +1,16 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/proxy
+- name: Launch proxy
+  docker_container:
+    name: httpd
+    image: jzhang04/tp-devops-httpd:latest
+    networks:
+      - name: app-network
+    ports:
+      - "80:80"
+    env:
+      BACKEND_HOST: "{{ backend_host }}"
+      BACKEND_PORT: "{{ backend_port }}"
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python

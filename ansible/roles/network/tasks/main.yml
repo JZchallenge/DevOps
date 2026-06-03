@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/network
+- name: Create app network
+  docker_network:
+    name: app-network
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
+
+- name: Create db network
+  docker_network:
+    name: db-network
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
