@@ -5,6 +5,7 @@
   docker_container:
     name: app
     image: jzhang04/tp-devops-simple-api:latest
+    recreate: true
     pull: true
     networks:
       - name: app-network
