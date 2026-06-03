@@ -11,10 +11,14 @@ public class GreetingController {
     private static final String TEMPLATE = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
 
+    @Value("${greeting.default-name:World}")
+    private String defaultName;
+
     @GetMapping
-    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
+    public Greeting greeting(@RequestParam(value = "name", required = false) String name) {
+        if (name == null) name = defaultName;
         return new Greeting(counter.incrementAndGet(), String.format(TEMPLATE, name));
     }
 
-    record Greeting(long id, String content) { }
+    record Greeting(long id, String content) {}
 }

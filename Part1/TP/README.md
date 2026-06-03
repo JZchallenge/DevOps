@@ -95,3 +95,9 @@ docker run -d \
   app → lance le backend Spring Boot connecté à la base via SPRING_DATASOURCE_URL qui pointe vers le conteneur database
   proxy → lance Apache httpd exposé sur le port 80 avec BACKEND_HOST=app et BACKEND_PORT=8080 pour rediriger les requêtes vers le backend
   Le ansible_python_interpreter: /opt/docker_venv/bin/python est nécessaire dans chaque tâche car le SDK Docker est installé dans un virtualenv et non dans le Python système.
+
+  # Is it really safe to deploy automatically every new image on the hub ? explain. What can I do to make it more secure?
+  Non ce n'est pas totalement sûr car n'importe quel push sur main redéploie en production immédiatement, même si l'image contient un bug ou une faille. Pour sécuriser on peut :
+  - Utiliser des tags de version (v1.0.0) plutôt que latest
+  - Ajouter une validation manuelle (GitHub Environments avec reviewers)
+  - Ajouter des tests d'intégration avant le déploiement

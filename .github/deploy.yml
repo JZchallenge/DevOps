@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      default_name:
+        description: "Valeur par défaut pour name"
+        required: false
+        default: "World"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Ansible
+        run: pip install ansible
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H jade.zhang.takima.school >> ~/.ssh/known_hosts
+      - name: Create vault password file
+        run: echo "${{ secrets.VAULT_PASSWORD }}" > vault_password.txt
+      - name: Deploy with Ansible
+        run: |
+          ansible-playbook \
+            -i ansible/inventories/setup.yml \
+            ansible/playbook.yml \
+            --vault-password-file vault_password.txt \
+            -e "default_name=${{ github.event.inputs.default_name }}"
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "false"

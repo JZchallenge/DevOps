@@ -12,5 +12,6 @@
       SPRING_DATASOURCE_URL: "jdbc:postgresql://database:5432/{{ db_name }}"
       SPRING_DATASOURCE_USERNAME: "{{ db_user }}"
       SPRING_DATASOURCE_PASSWORD: "{{ db_password }}"
+      DEFAULT_NAME: "{{ default_name | default('World') }}"
   vars:
     ansible_python_interpreter: /opt/docker_venv/bin/python
