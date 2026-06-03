@@ -1,0 +1,9 @@
+- name: Launch front
+  docker_container:
+    name: front
+    image: jzhang04/tp-devops-front:latest
+    recreate: true
+    networks:
+      - name: app-network
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
