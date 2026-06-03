@@ -70,3 +70,4 @@ jobs:
             tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-front:latest
             push: true
             no-cache: true
+            cache-from: ''
