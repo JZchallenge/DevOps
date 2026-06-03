@@ -5,6 +5,7 @@
   docker_container:
     name: httpd
     image: jzhang04/tp-devops-httpd:latest
+    pull: true
     networks:
       - name: app-network
     ports:

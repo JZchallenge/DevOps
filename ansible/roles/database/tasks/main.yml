@@ -5,6 +5,7 @@
   docker_container:
     name: database
     image: jzhang04/tp-devops-database:latest
+    pull: true
     networks:
       - name: db-network
     env:
